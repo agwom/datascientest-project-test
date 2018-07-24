@@ -1,0 +1,29 @@
+
+#charger le package pandas sous le nom pd
+import pandas as pd
+
+#importer 'ordereddict' du module 'collections' qui permet de conserver l’ordre d’insertion lors de la création d'un dictionnaire
+from collections import OrderedDict
+
+#création des variables
+dfvars = []
+newvarflag = False
+
+#ouvrir le fichier text 
+with open(r"C:\Users\daido\Downloads\PM000104.txt") as optxt:
+#pour chaque ligne on qui commence par une nouvelle variable (si le texte est en majuscule) on crée la variable dfvars composé 
+#de deux éléments séparé lorsque l'on a ':' (type string ou chaine de charactère)
+    for line in optxt:
+        linevar = line.rstrip("\r\n").split(": ") if ":" in line else line.rstrip("\r\n").split()
+        if linevar[0].isupper():
+            dfvars.append(linevar)
+            newvarflag = True
+#Pour les lignes qui ne commence pas par une nouvelle variable (pas de majuscule) on crée un dictionnaire qui va stocker les peaks
+        else:
+            dfvars[-1][1] = OrderedDict({subvar: [] for subvar in dfvars[-1][1].split()}) if newvarflag else dfvars[-1][1]
+            [dfvars[-1][1][key].append(linevar[i]) for i, key in enumerate(dfvars[-1][1].keys()) if len(linevar) == len(dfvars[-1][1])]
+            newvarflag = False
+#Permet de visualiser le fichier
+for var in dfvars:
+    print(var)
+    
